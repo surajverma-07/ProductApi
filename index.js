@@ -33,3 +33,7 @@ connectDB()
     console.log("Mongo DB connection Failed ! ", err);
   });
 
+// import statement of routes 
+import productRouter from './routes/product.routes.js';
+
+app.use("/api/product",productRouter)
