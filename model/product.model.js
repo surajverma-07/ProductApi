@@ -22,10 +22,6 @@ const productSchema = new Schema(
       type: String,//cloudinary url
       required: true,
     },
-    sold: {
-      type: Boolean,
-      default: false,
-    },
   },
   { timestamps: true }
 );
