@@ -38,7 +38,33 @@ const addProduct = asyncHandler(async(req,res)=>{
         new ApiResponse(200,product,"Product Added Successfully ")
     )
 })
+const updateProduct = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { name, category, price, description } = req.body;
+    
+    if (!(name || category || price || description)) {
+        throw new ApiError(400, "At least one field is required to update");
+    }
+
+    const product = await Product.findByIdAndUpdate(
+        id,
+        { name, category, price, description },
+        { new: true, runValidators: true }
+    );
+
+    if (!product) {
+        throw new ApiError(404, "Product not found");
+    }
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, product, "Product Updated Successfully")
+        );
+});
 
 export {
-    addProduct
+    addProduct,
+    updateProduct,
+    
 }
