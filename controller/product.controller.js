@@ -39,7 +39,10 @@ const addProduct = asyncHandler(async (req, res) => {
 const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, category, price, description } = req.body;
-
+  const isProduct = await Product.findById(id);
+  if(!isProduct){
+      throw new ApiError(404,"Product Not Exist With this id")
+  }
   if (!(name || category || price || description)) {
     throw new ApiError(400, "At least one field is required to update");
   }
@@ -64,7 +67,10 @@ const updateImage = asyncHandler(async (req, res) => {
     if (!id) {
       throw new ApiError(404, "Id is not present in params");
     }
-    
+    const isProduct = await Product.findById(id);
+    if(!isProduct){
+        throw new ApiError(404,"Product Not Exist With this id")
+    }
     const imagelocalpath = req.file?.path;
     
     if (!imagelocalpath) {
@@ -93,7 +99,26 @@ const updateImage = asyncHandler(async (req, res) => {
         new ApiResponse(200, product, "Image Changed Successfully")
       );
   });
-  
+const deleteProduct = asyncHandler(async(req,res)=>{
+    const { id } = req.params;
+    
+    if (!id) {
+      throw new ApiError(404, "Id is not present in params");
+    }
+    const product = await Product.findById(id);
+    if(!product){
+        throw new ApiError(404,"Product Not Exist or Deleted")
+    }
+    const deletedProduct = await Product.findByIdAndDelete(id,{new:true});
+    if(!deletedProduct){
+        throw new ApiError(404,"Error While Deletion of product ")
+    }
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200,null,"Product Deleted Successfully")
+    )
+})
 const getProductById = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -123,4 +148,4 @@ const getAllProducts = asyncHandler(async (req, res) => {
     );
 });
 
-export { addProduct, updateProduct, getAllProducts, getProductById,updateImage };
+export { addProduct, updateProduct, getAllProducts, getProductById,updateImage,deleteProduct };
